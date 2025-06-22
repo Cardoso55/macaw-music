@@ -87,7 +87,7 @@ function App() {
   }
 
   try {
-    const res = await fetch(`https://macaw-music.onrender.com/deezer/search/artist?q=${encodeURIComponent(q)}`);
+    const res = await fetch(`http://localhost:5000/deezer/search/artist?q=${encodeURIComponent(q)}`);
 
     const data = await res.json();
 
@@ -173,7 +173,7 @@ function App() {
 };
   
   const buscarLetra = async (artista, musica, capa) => {
-  const url = `https://macaw-music.onrender.com/lyrics?artist=${encodeURIComponent(artista)}&title=${encodeURIComponent(musica)}`;
+  const url = `http://localhost:5000/lyrics?artist=${encodeURIComponent(artista)}&title=${encodeURIComponent(musica)}`;
 
 
   try {
