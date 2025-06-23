@@ -84,29 +84,45 @@ function App() {
     }
   };
 
-  const buscarArtista = async (q) => {
+ const buscarArtista = async (q) => {
   if (!q) {
     setArtistas([]);
     return;
   }
 
-  try {
-    const res = await fetch(`http://localhost:5000/deezer/search/artist?q=${encodeURIComponent(q)}`);
+  const url = `https://deezerdevs-deezer.p.rapidapi.com/search?q=${encodeURIComponent(q)}`;
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': 'a534008d60mshec9500de3c5977bp1e540cjsn7cfd3cdff862', // Use sua chave se der limite
+      'X-RapidAPI-Host': 'deezerdevs-deezer.p.rapidapi.com'
+    }
+  };
 
+  try {
+    const res = await fetch(url, options);
     const data = await res.json();
 
     if (Array.isArray(data.data)) {
-      console.log('✅ Artistas encontrados via proxy:', data.data);
-      setArtistas(data.data);
+      // Extrair artistas únicos
+      const artistasUnicos = Array.from(
+        new Map(data.data.map(item => [item.artist.id, item.artist])).values()
+      );
+      console.log('✅ Artistas únicos:', artistasUnicos);
+      setArtistas(artistasUnicos);
     } else {
       console.warn('⚠️ Nenhum artista encontrado');
       setArtistas([]);
     }
   } catch (error) {
-    console.error('❌ Erro ao buscar artista via proxy:', error);
+    console.error('❌ Erro ao buscar artista:', error);
     setArtistas([]);
   }
 };
+
+
+
+
 
   const buscarGeneros = () => {
     generosComIds.forEach(({ nome, id }) => {
@@ -177,8 +193,7 @@ function App() {
 };
   
   const buscarLetra = async (artista, musica, capa) => {
-  const url = `http://localhost:5000/lyrics?artist=${encodeURIComponent(artista)}&title=${encodeURIComponent(musica)}`;
-
+  const url = `https://api.lyrics.ovh/v1/${encodeURIComponent(artista)}/${encodeURIComponent(musica)}`;
 
   try {
     const response = await fetch(url);
@@ -193,7 +208,7 @@ function App() {
       console.log('Letra da música:', data.lyrics);
       const letraComEstrofesSeparadas = data.lyrics.replace(/([^\n])\n(?=[^\n])/g, '$1\n');
       setLetra(letraComEstrofesSeparadas);
-      setInfoMusica({artista, musica, capa});
+      setInfoMusica({ artista, musica, capa });
       setMostrarModal(true);
     } else {
       console.warn('Letra não encontrada.');
@@ -202,6 +217,7 @@ function App() {
     console.error('Erro ao buscar letra:', error.message);
   }
 };
+
 
 
   return (

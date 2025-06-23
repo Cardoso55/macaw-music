@@ -18,18 +18,21 @@ function Artist({ setPlaylist, setCurrentIndex, setIsPlaying , tocarPreview , bu
     console.log('🆔 ID do artista:', artista?.id);
     if (!artista) return;
 
-    const buscarTop10DoArtista = async (idArtista) => {
-  try {
-    const res = await fetch(`http://localhost:5000/deezer/artist/${idArtista}/top?limit=10`);
-    const data = await res.json();
+    const buscarTop10DoArtista = (idArtista) => {
+  const callbackName = `jsonp_callback_${Math.floor(Math.random() * 100000)}`;
 
-    console.log('🎯 Top 10 músicas do artista:', data.data);
-    setTopMusicas(data.data); // Crie um estado pra armazenar isso se for usar em tela
-  } catch (error) {
-    console.error('❌ Erro ao buscar top 10 do artista:', error);
-  }
+  window[callbackName] = (data) => {
+    console.log('🎶 Top músicas do artista:', data.data);
+    setTopMusicas(data.data || []);
+    delete window[callbackName];
+    document.body.removeChild(script);
+  };
+
+  const script = document.createElement('script');
+  script.src = `https://api.deezer.com/artist/${idArtista}/top?limit=10&output=jsonp&callback=${callbackName}`;
+  document.body.appendChild(script);
 };
-  
+
 
     buscarTop10DoArtista(artista.id);
   }, [artista]);
