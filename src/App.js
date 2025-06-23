@@ -49,7 +49,11 @@ function App() {
   const audioRef = useRef(null);
   const location = useLocation();
   const currentPath = location.pathname;
-  const showPlayer = currentPath === '/' || currentPath.startsWith('/artist/');
+ const showPlayer =
+  currentPath === '/' ||
+  currentPath.startsWith('/artist/') ||
+  currentPath.startsWith('/album/');
+
 
   useEffect(() => {
     buscarGeneros();

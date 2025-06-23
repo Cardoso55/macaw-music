@@ -48,7 +48,10 @@ function Artist({ setPlaylist, setCurrentIndex, setIsPlaying , tocarPreview , bu
       <ul className="top-musicas-lista">
       {topMusicas.map((musica, index) => (
         <li key={musica.id} className="musica-item">
-          <img src={musica.album.cover_medium} alt={musica.album.title} />
+          {musica.album?.cover_medium && (
+  <img src={musica.album.cover_medium} alt={musica.album.title} />
+)}
+
           <div className="musica-info">
             <strong>{musica.title}</strong>
             <p>{musica.album.title}</p>
